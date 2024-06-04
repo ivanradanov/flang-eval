@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 2048
+    integer, parameter :: N = 256
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -42,9 +42,9 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
 
   ostart = omp_get_wtime()
 
-  !$omp target teams workdistribute
+  !$omp target teams coexecute
   z = matmul(x, y)
-  !$omp end target teams workdistribute
+  !$omp end target teams coexecute
 
   oend = omp_get_wtime()
 
