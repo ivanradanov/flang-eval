@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 1024
+    integer, parameter :: N = 2024
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -33,15 +33,16 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   integer :: n, i, j, k
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
-  double precision :: ostart, oend
+  double precision :: ostart, oend, allstart, allend
 
   write (*,*) 'n before', n
   write (*,*) 'a before', a
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
+  allstart = omp_get_wtime()
+  !$omp target data map(tofrom:x,y,z)
   ostart = omp_get_wtime()
-
   !$omp target teams distribute parallel do collapse(2)
   do i = 1, n
     do j = 1, n
@@ -52,8 +53,9 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
     enddo
   enddo
   !$omp end target teams distribute parallel do
-
   oend = omp_get_wtime()
+  !$omp end target data
+  allend = omp_get_wtime()
 
 
   write (*,*) 'n after', n
@@ -67,7 +69,8 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   !    end do
   ! end do
 
-  print *, 'Time: ', oend-ostart, 'seconds.'
+  print *, 'Time computation: ', oend-ostart, 'seconds.'
+  print *, 'Time all: ', allend-allstart, 'seconds.'
 
   sum_less = sum(z(1:n/2,1:n/3) - 2) / ( n * n)
 
