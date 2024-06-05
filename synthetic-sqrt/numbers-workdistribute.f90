@@ -7,7 +7,6 @@ program test
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
     double precision, dimension(:, :), allocatable :: y
-
     double precision, dimension(:, :), allocatable :: z
 
     allocate(x(N, N))

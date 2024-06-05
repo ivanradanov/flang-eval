@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 128
+    integer, parameter :: N = 1024
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
