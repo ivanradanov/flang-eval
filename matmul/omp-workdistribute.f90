@@ -30,7 +30,7 @@ contains
 function coexecute_a(x, y, z, n, a) result(sum_less)
   use omp_lib
   implicit none
-  integer :: n, i, j
+  integer :: n, i, j, try
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
   double precision :: ostart, oend, allstart, allend
@@ -40,15 +40,17 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
-  allstart = omp_get_wtime()
-  !$omp target data map(tofrom:x,y,z)
-  ostart = omp_get_wtime()
-  !$omp target teams coexecute
-  z = matmul(x, y)
-  !$omp end target teams coexecute
-  oend = omp_get_wtime()
-  !$omp end target data
-  allend = omp_get_wtime()
+  do try = 1, 10
+    allstart = omp_get_wtime()
+    !$omp target data map(tofrom:x,y,z)
+    ostart = omp_get_wtime()
+    !$omp target teams coexecute
+    z = matmul(x, y)
+    !$omp end target teams coexecute
+    oend = omp_get_wtime()
+    !$omp end target data
+    allend = omp_get_wtime()
+  enddo
 
 
   write (*,*) 'n after', n

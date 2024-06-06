@@ -30,7 +30,7 @@ contains
 function coexecute_a(x, y, z, n, a) result(sum_less)
   use omp_lib
   implicit none
-  integer :: n, i, j, k
+  integer :: n, i, j, k, try
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
   double precision :: ostart, oend, allstart, allend
@@ -40,22 +40,24 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
-  allstart = omp_get_wtime()
-  !$omp target data map(tofrom:x,y,z)
-  ostart = omp_get_wtime()
-  !$omp target teams distribute parallel do collapse(2)
-  do i = 1, n
-    do j = 1, n
-      z(j, i) = 0
-      do k = 1, n
-         z(j, i) = z(j, i) + x(j, k) * y(k, i)
+  do try = 1, 10
+    allstart = omp_get_wtime()
+    !$omp target data map(tofrom:x,y,z)
+    ostart = omp_get_wtime()
+    !$omp target teams distribute parallel do collapse(2)
+    do i = 1, n
+      do j = 1, n
+        z(j, i) = 0
+        do k = 1, n
+          z(j, i) = z(j, i) + x(j, k) * y(k, i)
+        enddo
       enddo
     enddo
+    !$omp end target teams distribute parallel do
+    oend = omp_get_wtime()
+    !$omp end target data
+    allend = omp_get_wtime()
   enddo
-  !$omp end target teams distribute parallel do
-  oend = omp_get_wtime()
-  !$omp end target data
-  allend = omp_get_wtime()
 
 
   write (*,*) 'n after', n
