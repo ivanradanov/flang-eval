@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = MATMUL_SIZE
+    integer, parameter :: N = AXPY_SIZE
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -30,7 +30,7 @@ contains
 function coexecute_a(x, y, z, n, a) result(sum_less)
   use omp_lib
   implicit none
-  integer :: n, i, j, try
+  integer :: n, i, j, k, try
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
   double precision :: ostart, oend, allstart, allend
@@ -42,11 +42,17 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
 
   do try = 1, 3
     allstart = omp_get_wtime()
+    !$omp target data map(tofrom:x,y,z)
     ostart = omp_get_wtime()
-
-    z = matmul(x, y)
-
+    !$omp target teams distribute parallel do collapse(2)
+    do i = 1, n
+      do j = 1, n
+        z(j, i) = a * x(j, i) + y(j, i)
+      enddo
+    enddo
+    !$omp end target teams distribute parallel do
     oend = omp_get_wtime()
+    !$omp end target data
     allend = omp_get_wtime()
   enddo
 

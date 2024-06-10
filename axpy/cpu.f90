@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = MATMUL_SIZE
+    integer, parameter :: N = AXPY_SIZE
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -44,7 +44,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
     allstart = omp_get_wtime()
     ostart = omp_get_wtime()
 
-    z = matmul(x, y)
+    z = a * x + y
 
     oend = omp_get_wtime()
     allend = omp_get_wtime()
