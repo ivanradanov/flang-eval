@@ -40,7 +40,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
-  do try = 1, 3
+  do try = 1, 2
     allstart = omp_get_wtime()
     ostart = omp_get_wtime()
 

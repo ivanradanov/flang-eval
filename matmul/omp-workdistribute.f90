@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 2024
+    integer, parameter :: N = MATMUL_SIZE
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -40,7 +40,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
-  do try = 1, 3
+  do try = 1, 2
     allstart = omp_get_wtime()
     !$omp target data map(tofrom:x,y,z)
     ostart = omp_get_wtime()
