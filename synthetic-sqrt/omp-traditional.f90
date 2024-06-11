@@ -34,6 +34,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
   double precision :: ostart, oend
+  double precision :: allstart, allend
 
   write (*,*) 'n before', n
   write (*,*) 'a before', a
@@ -42,6 +43,9 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
 
   ostart = omp_get_wtime()
 
+  allstart = omp_get_wtime()
+  !$omp target data map(tofrom:x,y)
+  ostart = omp_get_wtime()
   !$omp target teams distribute parallel do collapse(2)
   do i = 1, n
     do j = 1, n
@@ -49,6 +53,9 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
     enddo
   enddo
   !$omp end target teams distribute parallel do
+  oend = omp_get_wtime()
+  !$omp end target data
+  allend = omp_get_wtime()
 
   oend = omp_get_wtime()
 
@@ -64,7 +71,8 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   !    end do
   ! end do
 
-  print *, 'Time: ', oend-ostart, 'seconds.'
+  print *, 'Time computation: ', oend-ostart, 'seconds.'
+  print *, 'Time all: ', allend-allstart, 'seconds.'
 
   sum_less = sum(z(1:n/2,1:n/3) - 2) / ( n * n)
 

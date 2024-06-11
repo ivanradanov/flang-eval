@@ -34,6 +34,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   double precision :: sum_less, a
   double precision, dimension(n, n) :: x, y, z
   double precision :: ostart, oend
+  double precision :: allstart, allend
 
   write (*,*) 'n before', n
   write (*,*) 'a before', a
@@ -42,9 +43,15 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
 
   ostart = omp_get_wtime()
 
+  allstart = omp_get_wtime()
+  !$omp target data map(tofrom:x,y)
+  ostart = omp_get_wtime()
   !$omp target teams coexecute
     y = sqrt(a * x + y)
   !$omp end target teams coexecute
+  oend = omp_get_wtime()
+  !$omp end target data
+  allend = omp_get_wtime()
 
   oend = omp_get_wtime()
 
