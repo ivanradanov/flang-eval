@@ -7,7 +7,6 @@ NRUNS=3
 . enable.sh /l/ssd/ivanov2/flang-release/install/
 module load rocm
 
-#for f in matmul/omp*.f90; do
 for f in matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
     if [[ "$(echo -n "$f" | tail -c 7)" != 'tmp.f90' ]]; then
         echo "$f"

@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 20480
+    integer, parameter :: N = SQRT_SIZE
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x

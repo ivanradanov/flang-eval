@@ -2,7 +2,7 @@
 program test
     implicit none
 
-    integer, parameter :: N = 20480
+    integer, parameter :: N = SQRT_SIZE
     !integer, parameter :: N = 16
     double precision :: a = 7, b
     double precision, dimension(:, :), allocatable :: x
@@ -47,7 +47,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   !$omp target data map(tofrom:x,y)
   ostart = omp_get_wtime()
   !$omp target teams coexecute
-    y = sqrt(a * x + y)
+  y = sqrt(a * x + y)
   !$omp end target teams coexecute
   oend = omp_get_wtime()
   !$omp end target data
@@ -67,7 +67,8 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   !    end do
   ! end do
 
-  print *, 'Time: ', oend-ostart, 'seconds.'
+  print *, 'Time computation: ', oend-ostart, 'seconds.'
+  print *, 'Time all: ', allend-allstart, 'seconds.'
 
   sum_less = sum(z(1:n/2,1:n/3) - 2) / ( n * n)
 
