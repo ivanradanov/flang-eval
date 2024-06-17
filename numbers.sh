@@ -15,8 +15,9 @@ else
     ROCMDIR=/opt/rocm-6.0.2/
 fi
 
+export LD_LIBRARY_PATH="$LIBDIR:$ROCMDIR/lib:$LD_LIBRARY_PATH"
 
-for f in matmul/omp-traditional.f90 matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
+for f in matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
     if [[ "$(echo -n "$f" | tail -c 7)" != 'tmp.f90' ]]; then
         echo "$f"
         tmpf="$f.tmp.f90"
