@@ -17,7 +17,8 @@ fi
 
 export LD_LIBRARY_PATH="$LIBDIR:$ROCMDIR/lib:$LD_LIBRARY_PATH"
 
-for f in matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
+function do_run() {
+    f=$1
     if [[ "$(echo -n "$f" | tail -c 7)" != 'tmp.f90' ]]; then
         echo "$f"
         tmpf="$f.tmp.f90"
@@ -31,4 +32,14 @@ for f in matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
             ./a.out 2> /dev/null | grep Time
         done
     fi
+}
+
+echo TRIVIAL
+for f in ./*/omp-workdistribute.f90; do
+    WORKDISTRIBUTE_TRIVIAL=1 do_run $f
+done
+
+echo HLFIR
+for f in matmul/*.f90 axpy/*.f90 synthetic-sqrt/*.f90; do
+    do_run $f
 done
