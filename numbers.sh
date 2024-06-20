@@ -22,7 +22,7 @@ function do_run() {
     if [[ "$(echo -n "$f" | tail -c 7)" != 'tmp.f90' ]]; then
         echo "$f"
         tmpf="$f.tmp.f90"
-        cat "$f" | sed 's/AXPY_SIZE/20480/' | sed 's/MATMUL_SIZE/4048/' | sed 's/SQRT_SIZE/20480/' > "$tmpf"
+        cat "$f" | sed 's/AXPY_SIZE/20480/' | sed 's/MATMUL_SIZE/4096/' | sed 's/SQRT_SIZE/20480/' > "$tmpf"
         flang-new -g -O2 -fopenmp --offload-arch=native \
             "$tmpf" \
             -o a.out \
