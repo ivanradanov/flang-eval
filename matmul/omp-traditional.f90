@@ -40,7 +40,7 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   write (*,*) 'z(1,1) before', z(1,1)
   write (*,*) 'checksum before', sum(z(1:n, 1:n))
 
-  do try = 1, 2
+  do try = 1, 30
     allstart = omp_get_wtime()
     !$omp target data map(tofrom:x,y,z)
     ostart = omp_get_wtime()
@@ -57,6 +57,9 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
     oend = omp_get_wtime()
     !$omp end target data
     allend = omp_get_wtime()
+
+    print *, 'Time computation: ', oend-ostart, 'seconds.'
+    print *, 'Time all: ', allend-allstart, 'seconds.'
   enddo
 
 
@@ -71,8 +74,6 @@ function coexecute_a(x, y, z, n, a) result(sum_less)
   !    end do
   ! end do
 
-  print *, 'Time computation: ', oend-ostart, 'seconds.'
-  print *, 'Time all: ', allend-allstart, 'seconds.'
 
   sum_less = sum(z(1:n/2,1:n/3) - 2) / ( n * n)
 
